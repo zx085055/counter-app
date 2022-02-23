@@ -1,5 +1,5 @@
 class CounterModel {
-  CounterEnum? status;
+  CounterEnum status;
   String number; ///被加減數
   String temp; ///加減數
 

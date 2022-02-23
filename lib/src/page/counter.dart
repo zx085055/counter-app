@@ -17,9 +17,12 @@ final counterProvider = StateProvider((ref) {
 class Counter extends ConsumerWidget {
   const Counter({Key? key}) : super(key: key);
 
-  Widget _numCircleButton({required WidgetRef ref, required String num, Color buttonBg = Colors.amber}) {
+  final double horizontalSpacing = 10.0; //水平間距
+  final double verticalSpacing = 10.0; //垂直間距
+
+  Widget _numCircleButton({required WidgetRef ref, required String num, Color buttonBg = Colors.amber, OutlinedBorder? shape}) {
     return SizedBox(
-      width: 64,
+      width: shape != null ? 138 : 64,
       height: 64,
       child: ElevatedButton(
         onPressed: () {
@@ -35,11 +38,19 @@ class Counter extends ConsumerWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          shape: const CircleBorder(),
+          shape: shape ?? const CircleBorder(),
           primary: buttonBg,
           onPrimary: Colors.white30,
         ),
       ),
+    );
+  }
+
+  Widget _functionCircleButton({required Widget child}) {
+    return SizedBox(
+      width: 64,
+      height: 64,
+      child: child,
     );
   }
 
@@ -88,15 +99,15 @@ class Counter extends ConsumerWidget {
                               ref: ref,
                               num: "7",
                             ),
-                            const SizedBox(
-                              width: 10,
+                            SizedBox(
+                              width: horizontalSpacing,
                             ),
                             _numCircleButton(
                               ref: ref,
                               num: "8",
                             ),
-                            const SizedBox(
-                              width: 10,
+                            SizedBox(
+                              width: horizontalSpacing,
                             ),
                             _numCircleButton(
                               ref: ref,
@@ -104,8 +115,8 @@ class Counter extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
+                        SizedBox(
+                          height: verticalSpacing,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -114,15 +125,15 @@ class Counter extends ConsumerWidget {
                               ref: ref,
                               num: "4",
                             ),
-                            const SizedBox(
-                              width: 10,
+                            SizedBox(
+                              width: horizontalSpacing,
                             ),
                             _numCircleButton(
                               ref: ref,
                               num: "5",
                             ),
-                            const SizedBox(
-                              width: 10,
+                            SizedBox(
+                              width: horizontalSpacing,
                             ),
                             _numCircleButton(
                               ref: ref,
@@ -130,8 +141,8 @@ class Counter extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
+                        SizedBox(
+                          height: verticalSpacing,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -140,15 +151,15 @@ class Counter extends ConsumerWidget {
                               ref: ref,
                               num: "1",
                             ),
-                            const SizedBox(
-                              width: 10,
+                            SizedBox(
+                              width: horizontalSpacing,
                             ),
                             _numCircleButton(
                               ref: ref,
                               num: "2",
                             ),
-                            const SizedBox(
-                              width: 10,
+                            SizedBox(
+                              width: horizontalSpacing,
                             ),
                             _numCircleButton(
                               ref: ref,
@@ -156,39 +167,21 @@ class Counter extends ConsumerWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 10,
+                        SizedBox(
+                          height: verticalSpacing,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            SizedBox(
-                              width: 138,
-                              height: 64,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  ref.read(counterProvider.state).state.inputNumber("0");
-                                  ref.refresh(counterProvider.state);
-                                },
-                                child: const Text(
-                                  "0",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  primary: Colors.amber,
-                                  onPrimary: Colors.white30,
-                                ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: "0",
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
                               ),
                             ),
-                            const SizedBox(
-                              width: 10,
+                            SizedBox(
+                              width: horizontalSpacing,
                             ),
                             _numCircleButton(
                               ref: ref,
@@ -200,6 +193,7 @@ class Counter extends ConsumerWidget {
                     ),
                   ),
                 ),
+
                 ///符號列
                 Container(
                   height: 400,
@@ -209,56 +203,49 @@ class Counter extends ConsumerWidget {
                     children: [
                       Consumer(
                         builder: (context, addRef, _) {
-                          return SizedBox(
-                            width: 64,
-                            height: 64,
+                          final CounterEnum watchStatus = addRef.watch(counterProvider.state).state.getValue().status;
+                          return _functionCircleButton(
                             child: ElevatedButton(
                               onPressed: () {
                                 ref.read(counterProvider.state).state.add();
                                 ref.refresh(counterProvider.state);
                               },
-                              child: Icon(Icons.add,
-                                  color: addRef.watch(counterProvider.state).state.getValue().status == CounterEnum.addWait ? Colors.amber : Colors.white),
+                              child: Icon(Icons.add, color: watchStatus == CounterEnum.addWait ? Colors.amber : Colors.white),
                               style: ElevatedButton.styleFrom(
                                 shape: const CircleBorder(),
-                                primary: addRef.watch(counterProvider.state).state.getValue().status == CounterEnum.addWait ? Colors.white : Colors.amber,
+                                primary: watchStatus == CounterEnum.addWait ? Colors.white : Colors.amber,
                                 onPrimary: Colors.white30,
                               ),
                             ),
                           );
                         },
                       ),
-                      const SizedBox(
-                        height: 10,
+                      SizedBox(
+                        height: verticalSpacing,
                       ),
                       Consumer(
                         builder: (context, reduceRef, _) {
-                          return SizedBox(
-                            width: 64,
-                            height: 64,
+                          final CounterEnum watchStatus = reduceRef.watch(counterProvider.state).state.getValue().status;
+                          return _functionCircleButton(
                             child: ElevatedButton(
                               onPressed: () {
                                 ref.read(counterProvider.state).state.reduce();
                                 ref.refresh(counterProvider.state);
                               },
-                              child: Icon(Icons.remove,
-                                  color:
-                                      reduceRef.watch(counterProvider.state).state.getValue().status == CounterEnum.reduceWait ? Colors.amber : Colors.white),
+                              child: Icon(Icons.remove, color: watchStatus == CounterEnum.reduceWait ? Colors.amber : Colors.white),
                               style: ElevatedButton.styleFrom(
                                 shape: const CircleBorder(),
-                                primary: reduceRef.watch(counterProvider.state).state.getValue().status == CounterEnum.reduceWait ? Colors.white : Colors.amber,
+                                primary: watchStatus == CounterEnum.reduceWait ? Colors.white : Colors.amber,
                                 onPrimary: Colors.white30,
                               ),
                             ),
                           );
                         },
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       SizedBox(
-                        width: 64,
-                        height: 64,
+                        height: verticalSpacing,
+                      ),
+                      _functionCircleButton(
                         child: ElevatedButton(
                           onPressed: () {
                             ref.read(counterProvider.state).state.clear();
@@ -279,12 +266,10 @@ class Counter extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
                       SizedBox(
-                        width: 64,
-                        height: 64,
+                        height: verticalSpacing,
+                      ),
+                      _functionCircleButton(
                         child: ElevatedButton(
                           onPressed: () {
                             ref.read(counterProvider.state).state.equal();
