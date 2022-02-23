@@ -2,31 +2,46 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_counter/src/notifier/counter_notifier.dart';
-
 import '../model/counter_model.dart';
+
+/// * 操作流程
+/// 加減號亮時會顯示被加減數，需輸入加減數符號才會暗下來
+/// 輸入完加減數後必須點等於運算才會顯示加減後結果並清除加減數
+/// 加減數清除後可再次輸入，再次清除時會把被加減數清除
+/// *
 
 final counterProvider = StateProvider((ref) {
   return CounterNotifier();
 });
 
-Widget circleButton({required Function onPressed, required Widget child, Color buttonBg = Colors.amber}) {
-  return SizedBox(
-    width: 64,
-    height: 64,
-    child: ElevatedButton(
-      onPressed: onPressed(),
-      child: child,
-      style: ElevatedButton.styleFrom(
-        shape: const CircleBorder(),
-        primary: buttonBg,
-        onPrimary: Colors.white30,
-      ),
-    ),
-  );
-}
-
 class Counter extends ConsumerWidget {
   const Counter({Key? key}) : super(key: key);
+
+  Widget _numCircleButton({required WidgetRef ref, required String num, Color buttonBg = Colors.amber}) {
+    return SizedBox(
+      width: 64,
+      height: 64,
+      child: ElevatedButton(
+        onPressed: () {
+          ref.read(counterProvider.state).state.inputNumber(num);
+          ref.refresh(counterProvider.state);
+        },
+        child: Text(
+          num,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 30,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          shape: const CircleBorder(),
+          primary: buttonBg,
+          onPrimary: Colors.white30,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,25 +74,104 @@ class Counter extends ConsumerWidget {
             ),
             Row(
               children: [
+                ///數字列
                 Expanded(
                   child: Container(
                     height: 400,
                     padding: const EdgeInsets.only(top: 10),
-                    child: Wrap(
+                    child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
+                            _numCircleButton(
+                              ref: ref,
+                              num: "7",
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: "8",
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: "9",
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            _numCircleButton(
+                              ref: ref,
+                              num: "4",
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: "5",
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: "6",
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            _numCircleButton(
+                              ref: ref,
+                              num: "1",
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: "2",
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: "3",
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
                             SizedBox(
-                              width: 64,
+                              width: 138,
                               height: 64,
                               child: ElevatedButton(
                                 onPressed: () {
-                                  ref.read(counterProvider.state).state.inputNumber("7");
+                                  ref.read(counterProvider.state).state.inputNumber("0");
                                   ref.refresh(counterProvider.state);
                                 },
                                 child: const Text(
-                                  "7",
+                                  "0",
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 30,
@@ -85,7 +179,9 @@ class Counter extends ConsumerWidget {
                                   ),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                  ),
                                   primary: Colors.amber,
                                   onPrimary: Colors.white30,
                                 ),
@@ -94,54 +190,9 @@ class Counter extends ConsumerWidget {
                             const SizedBox(
                               width: 10,
                             ),
-                            SizedBox(
-                              width: 64,
-                              height: 64,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  ref.read(counterProvider.state).state.inputNumber("8");
-                                  ref.refresh(counterProvider.state);
-                                },
-                                child: const Text(
-                                  "8",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  primary: Colors.amber,
-                                  onPrimary: Colors.white30,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              width: 64,
-                              height: 64,
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  ref.read(counterProvider.state).state.inputNumber("9");
-                                  ref.refresh(counterProvider.state);
-                                },
-                                child: const Text(
-                                  "9",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  primary: Colors.amber,
-                                  onPrimary: Colors.white30,
-                                ),
-                              ),
+                            _numCircleButton(
+                              ref: ref,
+                              num: ".",
                             ),
                           ],
                         ),
@@ -149,6 +200,7 @@ class Counter extends ConsumerWidget {
                     ),
                   ),
                 ),
+                ///符號列
                 Container(
                   height: 400,
                   width: 90,

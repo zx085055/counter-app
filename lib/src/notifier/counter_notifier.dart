@@ -1,3 +1,4 @@
+import 'package:decimal/decimal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/counter_model.dart';
@@ -8,22 +9,22 @@ class CounterNotifier extends StateNotifier<CounterModel> {
   CounterModel getValue() => state;
 
   void add() {
-    state.status = CounterEnum.addWait;
+    state.temp = "0";
+    state.status = CounterEnum.addWait; //當輸入加減數時才會將狀態改為
   }
 
   void reduce() {
+    state.temp = "0";
     state.status = CounterEnum.reduceWait;
   }
 
   void equal() {
     switch (state.status) {
       case CounterEnum.add:
-        state.number = (double.parse(state.number) + double.parse(state.temp)).toString();
+        state.number = (Decimal.parse(state.number) + Decimal.parse(state.temp)).toString();
         break;
       case CounterEnum.reduce:
-        state.number = (double.parse(state.number) - double.parse(state.temp)).toString();
-        break;
-      case CounterEnum.none:
+        state.number = (Decimal.parse(state.number) - Decimal.parse(state.temp)).toString();
         break;
       default:
         break;
@@ -34,7 +35,7 @@ class CounterNotifier extends StateNotifier<CounterModel> {
 
   void inputNumber(String chat) {
     if (state.status != CounterEnum.none) {
-      checkStatus();
+      changeStatus();
       state.temp = addString(state.temp, chat);
     } else {
       state.number = addString(state.number, chat);
@@ -52,14 +53,15 @@ class CounterNotifier extends StateNotifier<CounterModel> {
   }
 
   String addString(String origin, String chat) {
-    if ((origin == "0" && chat == "0") || (origin.indexOf(".") == origin.length - 1 && chat == ".") || origin.contains(".")) {
+    ///阻擋一直輸入0及小數點
+    if ((origin == "0" && chat == "0") || (origin.contains(".") && chat == ".")) {
       return origin;
     } else {
-      return origin == "0" ? origin = chat : origin += chat;
+      return origin == "0" && chat != "." ? origin = chat : origin += chat;
     }
   }
 
-  void checkStatus() {
+  void changeStatus() {
     if (state.status == CounterEnum.addWait) {
       state.status = CounterEnum.add;
     } else if (state.status == CounterEnum.reduceWait) {

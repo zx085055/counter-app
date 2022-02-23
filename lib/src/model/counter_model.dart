@@ -1,7 +1,7 @@
 class CounterModel {
   CounterEnum? status;
-  String number;
-  String temp;
+  String number; ///被加減數
+  String temp; ///加減數
 
   CounterModel({
     this.status = CounterEnum.none,
