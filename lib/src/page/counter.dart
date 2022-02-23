@@ -19,8 +19,13 @@ class Counter extends ConsumerWidget {
 
   final double horizontalSpacing = 10.0; //水平間距
   final double verticalSpacing = 10.0; //垂直間距
+  final Color bgColor = Colors.black; //被景色
+  final Color normalColor = Colors.amber; //按鈕一般顏色
+  final Color activeColor = Colors.white; //按鈕選中顏色
+  final Color onPrimaryColor = Colors.white30; //按鈕點選時顏色
+  final Color textColor = Colors.white; //文字顏色
 
-  Widget _numCircleButton({required WidgetRef ref, required String num, Color buttonBg = Colors.amber, OutlinedBorder? shape}) {
+  Widget _numCircleButton({required WidgetRef ref, required String num, Color? buttonBg, OutlinedBorder? shape}) {
     return SizedBox(
       width: shape != null ? 138 : 64,
       height: 64,
@@ -31,16 +36,16 @@ class Counter extends ConsumerWidget {
         },
         child: Text(
           num,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: textColor,
             fontSize: 30,
             fontWeight: FontWeight.w400,
           ),
         ),
         style: ElevatedButton.styleFrom(
           shape: shape ?? const CircleBorder(),
-          primary: buttonBg,
-          onPrimary: Colors.white30,
+          primary: buttonBg ?? normalColor,
+          onPrimary: onPrimaryColor,
         ),
       ),
     );
@@ -58,7 +63,7 @@ class Counter extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Container(
-        color: Colors.black,
+        color: bgColor,
         width: double.infinity,
         height: double.infinity,
         child: Column(
@@ -74,8 +79,8 @@ class Counter extends ConsumerWidget {
                     final CounterModel model = textRef.watch(counterProvider.state).state.getValue();
                     return Text(
                       model.status == CounterEnum.add || model.status == CounterEnum.reduce ? model.temp : model.number,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: textColor,
                         fontSize: 90,
                       ),
                     );
@@ -210,11 +215,11 @@ class Counter extends ConsumerWidget {
                                 ref.read(counterProvider.state).state.add();
                                 ref.refresh(counterProvider.state);
                               },
-                              child: Icon(Icons.add, color: watchStatus == CounterEnum.addWait ? Colors.amber : Colors.white),
+                              child: Icon(Icons.add, color: watchStatus == CounterEnum.addWait ? normalColor : activeColor),
                               style: ElevatedButton.styleFrom(
                                 shape: const CircleBorder(),
-                                primary: watchStatus == CounterEnum.addWait ? Colors.white : Colors.amber,
-                                onPrimary: Colors.white30,
+                                primary: watchStatus == CounterEnum.addWait ? activeColor : normalColor,
+                                onPrimary: onPrimaryColor,
                               ),
                             ),
                           );
@@ -232,11 +237,11 @@ class Counter extends ConsumerWidget {
                                 ref.read(counterProvider.state).state.reduce();
                                 ref.refresh(counterProvider.state);
                               },
-                              child: Icon(Icons.remove, color: watchStatus == CounterEnum.reduceWait ? Colors.amber : Colors.white),
+                              child: Icon(Icons.remove, color: watchStatus == CounterEnum.reduceWait ? normalColor : activeColor),
                               style: ElevatedButton.styleFrom(
                                 shape: const CircleBorder(),
-                                primary: watchStatus == CounterEnum.reduceWait ? Colors.white : Colors.amber,
-                                onPrimary: Colors.white30,
+                                primary: watchStatus == CounterEnum.reduceWait ? activeColor : normalColor,
+                                onPrimary: onPrimaryColor,
                               ),
                             ),
                           );
@@ -251,18 +256,18 @@ class Counter extends ConsumerWidget {
                             ref.read(counterProvider.state).state.clear();
                             ref.refresh(counterProvider.state);
                           },
-                          child: const Text(
+                          child: Text(
                             "C",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: textColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
-                            primary: Colors.amber,
-                            onPrimary: Colors.white30,
+                            primary: normalColor,
+                            onPrimary: onPrimaryColor,
                           ),
                         ),
                       ),
@@ -275,18 +280,18 @@ class Counter extends ConsumerWidget {
                             ref.read(counterProvider.state).state.equal();
                             ref.refresh(counterProvider.state);
                           },
-                          child: const Text(
+                          child: Text(
                             "=",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: textColor,
                               fontSize: 30,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
-                            primary: Colors.amber,
-                            onPrimary: Colors.white30,
+                            primary: normalColor,
+                            onPrimary: onPrimaryColor,
                           ),
                         ),
                       ),
